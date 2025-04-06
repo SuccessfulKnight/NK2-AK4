@@ -66,3 +66,4 @@ Ansible
     - kjør ansible-playbook -i hosts hsrp.yaml for å sette opp, lag endringer som er nødvendig for deg
     - kjør ansible-playbook -i hosts dhcp.yaml for å sette opp, lag endringer i filen som er nødvendig for deg
     - kjør ansible-playbook -i hosts etherchannel.yaml for å sette opp, lag endringer i filen som er nødvendig for deg
+

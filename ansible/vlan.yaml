@@ -1,0 +1,16 @@
+---
+- name: Add VLAN to Cisco Router or Switch
+  hosts: ciscoswitch2  # you can limit it to a group like switches, routers, etc.
+  gather_facts: no
+  connection: network_cli
+
+  vars:
+    vlan_id: 100
+    vlan_name: USERS
+
+  tasks:
+    - name: Create VLAN
+      ios_config:
+        lines:
+          - name {{ vlan_name }}
+        parents: vlan {{ vlan_id }}

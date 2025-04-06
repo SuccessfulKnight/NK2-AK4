@@ -1,0 +1,79 @@
+---
+- name: Configure Router1 interfaces and HSRP
+  hosts: ciscorouter1
+  gather_facts: false
+  connection: network_cli
+
+  vars:
+    hsrp_group: 1
+
+  tasks:
+    - name: Configure main physical interface on Router1
+      ios_config:
+        lines:
+          - no shutdown
+        parents: interface GigabitEthernet0/1
+
+    - name: Configure subinterface for VLAN 25 on Router1
+      ios_config:
+        lines:
+          - encapsulation dot1Q 25
+          - ip address 10.10.125.1 255.255.255.0
+          - no shutdown
+        parents: interface GigabitEthernet0/1.25
+
+    - name: Configure HSRP on VLAN 12
+      ios_config:
+        lines:
+          - standby {{ hsrp_group }} ip 10.10.12.3
+          - standby {{ hsrp_group }} priority 110
+          - standby {{ hsrp_group }} preempt
+        parents: interface GigabitEthernet0/0.12
+
+    - name: Configure HSRP on VLAN 25
+      ios_config:
+        lines:
+          - standby {{ hsrp_group }} ip 10.10.125.3
+          - standby {{ hsrp_group }} priority 110
+          - standby {{ hsrp_group }} preempt
+        parents: interface GigabitEthernet0/1.25
+
+
+- name: Configure Router2 interfaces and HSRP
+  hosts: ciscorouter2
+  gather_facts: false
+  connection: network_cli
+
+  vars:
+    hsrp_group: 1
+
+  tasks:
+    - name: Configure main physical interface on Router2
+      ios_config:
+        lines:
+          - no shutdown
+        parents: interface GigabitEthernet0/1
+
+    - name: Configure subinterface for VLAN 25 on Router2
+      ios_config:
+        lines:
+          - encapsulation dot1Q 25
+          - ip address 10.10.125.2 255.255.255.0
+          - no shutdown
+        parents: interface GigabitEthernet0/1.25
+
+    - name: Configure HSRP on VLAN 12
+      ios_config:
+        lines:
+          - standby {{ hsrp_group }} ip 10.10.12.3
+          - standby {{ hsrp_group }} priority 100
+          - standby {{ hsrp_group }} preempt
+        parents: interface GigabitEthernet0/0.12
+
+    - name: Configure HSRP on VLAN 25
+      ios_config:
+        lines:
+          - standby {{ hsrp_group }} ip 10.10.125.3
+          - standby {{ hsrp_group }} priority 100
+          - standby {{ hsrp_group }} preempt
+        parents: interface GigabitEthernet0/1.25

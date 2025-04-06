@@ -1,0 +1,29 @@
+- name: configure etherchannel
+  hosts: ciscoswitch2
+  gather_facts: no
+  connection: network_cli
+
+  tasks: 
+    - name: configure fysiske porter
+      ios_config:
+        lines:
+          - description Link 1 to Switch
+          - channel-group 2 mode active
+          - no shutdown
+        parents: "interface FastEthernet0/23"
+
+    - name: configure 2 fyiske port
+      ios_config:
+        lines:
+          - description Link 2 to Switch
+          - channel-group 2 mode active
+          - no shutdown
+        parents: "interface FastEthernet0/24"
+
+    - name: configure port channel
+      ios_config:
+        lines:
+          - description Switch to Switch EtherChannel
+          - switchport mode trunk
+          - no shutdown
+        parents: "interface Port-Channel2"

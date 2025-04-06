@@ -1,0 +1,58 @@
+- name: configure DHCP på vlan 25 og router 1
+  hosts: ciscorouter1
+  gather_facts: no
+  connection: network_cli
+
+  vars:
+    interface: GigabitEthernet0/1.25
+    vlan_id: 25
+    vlan_name: STUD1
+    dhcp_pool_name: R1
+    network: 10.10.125.0
+    subnet_mask: 255.255.255.0
+    default_router: 10.10.125.1
+    dns_servers: [8.8.8.8, 8.8.4.4]
+    domain_name: cisco.local
+    excluded_start: 10.10.125.1
+    excluded_end: 10.10.125.125
+
+  tasks:
+    - name: Configure DHCP på router 1
+      ios_config:
+        lines:
+          - ip dhcp excluded-address {{ excluded_start }} {{ excluded_end }}
+          - ip dhcp pool {{ dhcp_pool_name }}
+          - network {{ network }} {{ subnet_mask }}
+          - default-router {{ default_router }}
+          - dns-server {{ dns_servers[0] }} {{ dns_servers[1] }}
+          - domain-name {{ domain_name }}
+
+
+- name: configure DHCP på vlan 25 og router 2
+  hosts: ciscorouter2
+  gather_facts: no
+  connection: network_cli
+
+  vars:
+    interface: GigabitEthernet0/1.25
+    vlan_id: 25
+    vlan_name: STUD1
+    dhcp_pool_name: R2
+    network: 10.10.125.0
+    subnet_mask: 255.255.255.0
+    default_router: 10.10.125.1
+    dns_servers: [8.8.8.8, 8.8.4.4]
+    domain_name: cisco.local
+    excluded_start: 10.10.125.125
+    excluded_end: 10.10.125.200
+
+  tasks:
+    - name: Configure DHCP på router 2
+      ios_config:
+        lines:
+          - ip dhcp excluded-address {{ excluded_start }} {{ excluded_end }}
+          - ip dhcp pool {{ dhcp_pool_name }}
+          - network {{ network }} {{ subnet_mask }}
+          - default-router {{ default_router }}
+          - dns-server {{ dns_servers[0] }} {{ dns_servers[1] }}
+          - domain-name {{ domain_name }}
